@@ -1,0 +1,21 @@
+server:
+  port: 81
+spring:
+  application:
+    name: auth
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://admin:123456@127.0.0.1:8848/eureka/
+  instance:
+    #访问路径可以显示ip地址
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
+    #自定义服务名称
+    instance-id: ${eureka.instance.ip-address}:${server.port}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"  #因为springboot2.1必须加上,支持访问/actuator/hystrix.stream

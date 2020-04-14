@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: register
+  security:
+    user:
+      name: admin
+      password: 123456
+server:
+  #集群环境可以跟换ip多部署
+  port: 8848
+
+eureka:
+  instance:
+    hostname: 127.0.0.1
+    #将自己的ip地址注册到eureka
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
+    instance-id: ${eureka.instance.ip-address}:${server.port}
+    lease-renewal-interval-in-seconds: 1  #心跳检测检测时间,每间隔1s,向服务端发送一次心跳,表明自己依然”存活“
+    lease-expiration-duration-in-seconds: 2 #续约时间,告诉服务端，如果我2s之内没有给你发心跳,就代表我“死”了,将我剔除
+
+
+  client:
+    service-url:
+      # 多个eureka用','分格
+      defaultZone: http://admin:123456@${eureka.instance.hostname}:${server.port}/eureka/
+    #是否将自己注册到eureka服务，因为该引用本身就是注册中心，不需要注册，集群的时候可以考虑开启
+    register-with-eureka: false
+    #注册中心职责是维护服务实例，false：不检索服务
+    fetch-registry: false
+  server:
+    #关闭自我保护机制
+    enable-self-preservation: true
+management:
+  endpoints:
+    web:
+      exposure:
+        #因为springboot2.1必须加上,支持访问/actuator/hystrix.stream
+        include: "*"
